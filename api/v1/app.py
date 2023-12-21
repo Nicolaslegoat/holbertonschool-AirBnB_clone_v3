@@ -9,10 +9,12 @@ from os import getenv
 app = Flask(__name__)
 app.register_blueprint(app_views)
 
+
 @app.teardown_appcontext
 def teardown_db(exception):
     """Teardown method to close the storage"""
     storage.close()
+
 
 if __name__ == "__main__":
     host = getenv("HBNB_API_HOST", "0.0.0.0")
