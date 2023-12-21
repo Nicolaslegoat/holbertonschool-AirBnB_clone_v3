@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+"""Main module to start the flask application"""
 
 import Flask
 from models import storage
