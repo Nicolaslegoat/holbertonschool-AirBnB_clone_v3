@@ -58,15 +58,15 @@ class FileStorage:
     def close(self):
         self.reload()
 
-    def get(self, cls, id):
-        retrieved_objects = self.all(cls)
-        for object in retrieved_objects.values():
-            if id == object.id:
-                return object
-        return None
-
     def count(self, cls=None):
+        """A method to count the number of objects in storage"""
+        dictionnary_object = self.__objects.items()
+        count = 0
+
         if cls is None:
-            return len(self.all())
+            return len(dictionnary_object)
         else:
-            return len(self.all(cls))
+            for key, value in dictionnary_object:
+                if cls == type(value):
+                    count += 1
+        return count
