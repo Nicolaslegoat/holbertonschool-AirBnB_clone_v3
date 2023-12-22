@@ -96,7 +96,7 @@ class FileStorage:
         count = 0
 
         if cls is None:
-            return len(dictionnary_object)
+            return len(self.__objects)
         else:
             for key, value in dictionnary_object:
                 if cls == type(value):
