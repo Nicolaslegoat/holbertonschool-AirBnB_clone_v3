@@ -28,14 +28,14 @@ class FileStorage:
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
-        self.all().update({obj.to_dict()['__class__'] + '.' + obj.id: obj})
+        key = "{}.{}".format(obj.__class__.__name__, obj.id)
+        FileStorage.__objects[key] = obj
 
     def save(self):
         """Saves storage dictionary to file"""
         with open(FileStorage.__file_path, 'w') as f:
             temp = {}
-            temp.update(FileStorage.__objects)
-            for key, val in temp.items():
+            for key, val in FileStorage.__objects.items():
                 temp[key] = val.to_dict()
             json.dump(temp, f)
 
@@ -50,32 +50,24 @@ class FileStorage:
         from models.review import Review
 
         classes = {
-                    'BaseModel': BaseModel, 'User': User, 'Place': Place,
-                    'State': State, 'City': City, 'Amenity': Amenity,
-                    'Review': Review
-                  }
+            'BaseModel': BaseModel, 'User': User, 'Place': Place,
+            'State': State, 'City': City, 'Amenity': Amenity,
+            'Review': Review
+        }
         try:
-            temp = {}
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
                 for key, val in temp.items():
-                    self.all()[key] = classes[val['__class__']](**val)
+                    cls_name = val['__class__']
+                    self.new(classes[cls_name](**val))
         except FileNotFoundError:
             pass
 
     def delete(self, obj=None):
         """Deletes an object from __objects if it's inside"""
-        try:
-            # Check if obj is provided
-            if obj is not None:
-                # Generate a unique key for obj
-                key = obj.to_dict()['__class__'] + '.' + obj.id
-
-                # Attempt to delete obj from __objects using the key
-                del FileStorage.__objects[key]
-        except KeyError:
-            # Ignore if the key doesn't exist in __objects
-            pass
+        if obj is not None:
+            key = "{}.{}".format(obj.__class__.__name__, obj.id)
+            FileStorage.__objects.pop(key, None)
 
     def close(self):
         """Deserializes the JSON file to objects"""
@@ -83,22 +75,13 @@ class FileStorage:
 
     def get(self, cls, id):
         """A method to retrieve one object"""
-        dictionnary_object = self.__objects.items()
-        key_concat = cls.__name__ + "." + id
-
-        for key, value in dictionnary_object:
-            if key_concat == key:
-                return value
+        key = "{}.{}".format(cls.__name__, id)
+        return FileStorage.__objects.get(key, None)
 
     def count(self, cls=None):
         """A method to count the number of objects in storage"""
-        dictionnary_object = self.__objects.items()
-        count = 0
-
         if cls is None:
-            return len(self.__objects)
+            return len(FileStorage.__objects)
         else:
-            for key, value in dictionnary_object:
-                if cls == type(value):
-                    count += 1
-        return count
+            return sum(1 for obj in FileStorage.__objects.values()
+                       if isinstance(obj, cls))
