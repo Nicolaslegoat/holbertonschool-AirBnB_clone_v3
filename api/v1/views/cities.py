@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Defines the API actions for City objects"""
 
-from flask import Flask, abort, request, jsonify
+from flask import Flask, abort, jsonify, request
 from models import storage
 from models.state import State
 from models.city import City
