@@ -15,7 +15,6 @@ def get_cities(state_id):
     if state is None:
         abort(404)
 
-
     cities = storage.all(City).values()
     state_cities = []
     for city in cities:
@@ -33,8 +32,7 @@ def get_city(city_id):
     return jsonify(city.to_dict())
 
 
-@app_views.route('/cities/<city_id>', methods=['DELETE'],
-                 strict_slashes=False)
+@app_views.route('/cities/<city_id>', methods=['DELETE'], strict_slashes=False)
 def delete_city(city_id):
     city = storage.get(City, city_id)
     if city is None:
@@ -61,8 +59,7 @@ def create_city(state_id):
     return jsonify(new_city.to_dict()), 201
 
 
-@app_views.route('/cities/<city_id>', methods=['PUT'],
-                 strict_slashes=False)
+@app_views.route('/cities/<city_id>', methods=['PUT'], strict_slashes=False)
 def update_city(city_id):
     city = storage.get(City, city_id)
     if city is None:
