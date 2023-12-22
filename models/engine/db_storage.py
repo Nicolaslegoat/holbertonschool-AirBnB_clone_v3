@@ -8,6 +8,7 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
+
 from os import getenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -77,11 +78,14 @@ class DBStorage:
         """call remove() method on the private session attribute"""
         self.__session.remove()
 
+
     def get(self, cls, id):
         """Retrieves one object"""
         retrieved_objects = self.all(cls)
-        key = "{}.{}".format(cls.__name__, id)
-        return retrieved_objects.get(key, None)
+        for object in retrieved_objects.values():
+            if id == object.id:
+                return object
+        return None
 
     def count(self, cls=None):
         """Returns number of objects in storage matching a given class"""
