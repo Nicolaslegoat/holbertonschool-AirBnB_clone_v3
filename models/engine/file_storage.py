@@ -89,16 +89,15 @@ class FileStorage:
         for key, value in dictionnary_object:
             if key_concat == key:
                 return value
+        return "Get success"
 
     def count(self, cls=None):
         """A method to count the number of objects in storage"""
-        dictionnary_object = self.__objects.items()
-        count = 0
-
         if cls is None:
-            return len(dictionnary_object)
+            return len(self.__objects)
         else:
-            for key, value in dictionnary_object:
+            count = 0
+            for key, value in self.__objects.items():
                 if cls == type(value):
                     count += 1
-        return count
+            return count
