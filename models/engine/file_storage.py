@@ -58,6 +58,16 @@ class FileStorage:
     def close(self):
         self.reload()
 
+
+    def get(self, cls, id):
+        """A method to retrieve one object"""
+        dictionnary_object = self.__objects.items()
+        key_concat = cls.__name__ + "." + id
+
+        for key, value in dictionnary_object:
+            if key_concat == key:
+                return value
+
     def count(self, cls=None):
         """A method to count the number of objects in storage"""
         dictionnary_object = self.__objects.items()
