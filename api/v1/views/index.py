@@ -8,7 +8,7 @@ from models import storage
 
 @app_views.route('/status')
 def status():
-    """return the status of the API"""
+    """Endpoint to retrieve the status of the API"""
     return jsonify({"status": "OK"})
 
 
