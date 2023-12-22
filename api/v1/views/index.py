@@ -1,24 +1,35 @@
 #!/usr/bin/python3
-"""Module containing status endpoint for the API v1"""
+"""
+    The `status` function returns a JSON response with the status "OK".
+    :return: a JSON response with the status "OK".
+"""
 
-from flask import jsonify
+
 from api.v1.views import app_views
 from models import storage
+from flask import jsonify
 
 
-@app_views.route('/status')
+@app_views.route("/status", methods=['GET'], strict_slashes=False)
 def status():
-    """Endpoint to retrieve the status of the API"""
     return jsonify({"status": "OK"})
 
 
-@app_views.route('/stats')
-def stats():
-    return jsonify({
-        "amenities": 3,
-        "cities": 5,
-        "places": 2,
-        "reviews": 3,
-        "states": 2,
-        "users": 3
-    })
+@app_views.route("/stats", methods=['GET'], strict_slashes=False)
+def object_by_type():
+    """
+    The function `object_by_type` returns a JSON object containing
+    the count of different types of
+    objects in a storage.
+    :return: a JSON object that contains the counts of different types
+    of objects in the storage.
+    """
+    return jsonify(
+        {
+            "amenities": storage.count("Amenity"),
+            "cities": storage.count("City"),
+            "places": storage.count("Place"),
+            "reviews": storage.count("Review"),
+            "states": storage.count("State"),
+            "users": storage.count("User")
+        })
