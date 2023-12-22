@@ -9,51 +9,70 @@ from api.v1.views import app_views
 
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
 def get_states():
-    states = storage.all(State).values()
-    return jsonify([states.to_dict() for state in states])
+    States = storage.all(State)
+    dict_json = []
+    for state in States.values():
+        dict_json.append(state.to_dict())
+    return jsonify(dict_json)
 
 
-@app_views.route('/states/<states_id>', methods=['GET'], strict_slashes=False)
-def get_state(state_id):
+@app_views.route('/states/<state_id>', methods=["GET"], strict_slashes=False)
+def get_states_id(state_id):
+    """Retrieves a State object"""
     state = storage.get(State, state_id)
     if state is None:
         abort(404)
-    return jsonify(state.to_dict())
+    else:
+        return jsonify(state.to_dict())
 
 
 @app_views.route('/states/<state_id>', methods=['DELETE'],
                  strict_slashes=False)
 def delete_state(state_id):
+    """Deletes a State object with id"""
     state = storage.get(State, state_id)
     if state is None:
         abort(404)
-    storage.delete(state)
-    storage.save()
+    else:
+        storage.delete(state)
+        storage.save()
+
     return jsonify({}), 200
 
 
-@app_views.route('/states', methods=['POST'], strict_slashes=False)
-def create_state():
-    data = request.get_json()
-    if not data:
-        abort(400, 'Not a JSON')
-    if 'name' not in data:
-        abort(400, 'Missing name')
-    new_state = State(**data)
-    new_state.save()
-    return jsonify(new_state.to_dict()), 201
+@app_views.route("/states", methods=["POST"], strict_slashes=False)
+def post_state():
+    """Creates a State"""
+    body = request.get_json()
+
+    if body is None:
+        abort(400, "Not a JSON")
+
+    if "name" not in body:
+        abort(400, "Missing name")
+
+    state = State(**body)
+    storage.new(state)
+    storage.save()
+
+    return jsonify(state.to_dict()), 201
 
 
-@app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
+@app_views.route("/states/<state_id>", methods=["PUT"], strict_slashes=False)
 def update_state(state_id):
+    """Updates a State object"""
     state = storage.get(State, state_id)
     if state is None:
         abort(404)
-    data = request.get_json()
-    if not data:
-        abort(400, 'Not a JSON')
-    for key, value in data.items():
+    else:
+        request_http = request.get_json()
+        if request_http is None:
+            abort(400, 'Not a JSON')
+
+    for key, value in request_http.items():
         if key not in ['id', 'created_at', 'updated_at']:
             setattr(state, key, value)
-    state.save()
+
+    storage.save()
+
     return jsonify(state.to_dict()), 200
