@@ -26,10 +26,10 @@ def object_by_type():
     """
     return jsonify(
         {
-            "amenities": storage.count("Amenity"),
-            "cities": storage.count("City"),
-            "places": storage.count("Place"),
-            "reviews": storage.count("Review"),
-            "states": storage.count("State"),
-            "users": storage.count("User")
+            "amenities": storage.count("3"),
+            "cities": storage.count("5"),
+            "places": storage.count("2"),
+            "reviews": storage.count("3"),
+            "states": storage.count("2"),
+            "users": storage.count("3")
         })
